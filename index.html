@@ -253,6 +253,7 @@
             flex: 1;
             max-width: 120px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
 
         .file-type:hover {
@@ -355,6 +356,102 @@
             margin-right: 8px;
         }
 
+        /* File Controls */
+        .file-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            transition: all 0.3s;
+            background-color: var(--light);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding-bottom: 5px;
+            scrollbar-width: thin;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            border: none;
+            background: var(--light-gray);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            background: #d1d9e6;
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .category-tab.all {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .category-tab.photo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .category-tab.audio {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .category-tab.video {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .category-tab.zip {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .category-tab.document {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            color: white;
+        }
+
         .files-section {
             height: 100%;
             overflow: hidden;
@@ -410,13 +507,56 @@
             overflow: hidden;
         }
 
+        .file-name-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
         .file-name {
             font-weight: 600;
-            margin-bottom: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: clamp(0.9rem, 2vw, 1rem);
+            cursor: pointer;
+            flex: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .file-name:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .file-name-editing {
+            background-color: white;
+            border: 2px solid var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            width: 100%;
+        }
+
+        .edit-name-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .file-item:hover .edit-name-btn {
+            opacity: 1;
+        }
+
+        .edit-name-btn:hover {
+            color: var(--primary);
         }
 
         .file-meta {
@@ -654,6 +794,10 @@
                 min-height: 200px;
                 padding: 30px 15px;
             }
+
+            .category-tabs {
+                padding-bottom: 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -685,6 +829,15 @@
                 max-width: 250px;
                 justify-content: center;
             }
+
+            .category-tabs {
+                gap: 5px;
+            }
+
+            .category-tab {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
         }
 
         /* Pencegahan zoom tambahan untuk iOS */
@@ -712,6 +865,46 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
+        }
+
+        /* File rename input */
+        .file-rename-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .file-rename-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .file-rename-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .rename-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .rename-save {
+            background: var(--success);
+            color: white;
+        }
+
+        .rename-cancel {
+            background: var(--gray);
+            color: white;
         }
     </style>
 </head>
@@ -754,27 +947,27 @@
                     <input type="file" id="fileInput" multiple style="display: none;">
                     
                     <div class="file-types">
-                        <div class="file-type photo">
+                        <div class="file-type photo" onclick="filterByCategory('photo')">
                             <i class="fas fa-image"></i>
                             <span class="file-type-name">Foto</span>
                             <span class="file-type-ext">JPG, PNG, GIF</span>
                         </div>
-                        <div class="file-type audio">
+                        <div class="file-type audio" onclick="filterByCategory('audio')">
                             <i class="fas fa-music"></i>
                             <span class="file-type-name">Audio</span>
                             <span class="file-type-ext">MP3, WAV, M4A</span>
                         </div>
-                        <div class="file-type video">
+                        <div class="file-type video" onclick="filterByCategory('video')">
                             <i class="fas fa-video"></i>
                             <span class="file-type-name">Video</span>
                             <span class="file-type-ext">MP4, AVI, MOV</span>
                         </div>
-                        <div class="file-type zip">
+                        <div class="file-type zip" onclick="filterByCategory('zip')">
                             <i class="fas fa-file-archive"></i>
                             <span class="file-type-name">ZIP</span>
                             <span class="file-type-ext">ZIP, RAR, 7Z</span>
                         </div>
-                        <div class="file-type document">
+                        <div class="file-type document" onclick="filterByCategory('document')">
                             <i class="fas fa-file"></i>
                             <span class="file-type-name">Dokumen</span>
                             <span class="file-type-ext">PDF, DOC, TXT</span>
@@ -813,6 +1006,34 @@
             
             <section class="files-section">
                 <h2 class="section-title"><i class="fas fa-folder-open"></i> File Terunggah</h2>
+                
+                <div class="file-controls">
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Cari file berdasarkan nama...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    
+                    <div class="category-tabs">
+                        <button class="category-tab all active" data-category="all" onclick="filterByCategory('all')">
+                            Semua
+                        </button>
+                        <button class="category-tab photo" data-category="photo" onclick="filterByCategory('photo')">
+                            <i class="fas fa-image"></i> Foto
+                        </button>
+                        <button class="category-tab audio" data-category="audio" onclick="filterByCategory('audio')">
+                            <i class="fas fa-music"></i> Audio
+                        </button>
+                        <button class="category-tab video" data-category="video" onclick="filterByCategory('video')">
+                            <i class="fas fa-video"></i> Video
+                        </button>
+                        <button class="category-tab zip" data-category="zip" onclick="filterByCategory('zip')">
+                            <i class="fas fa-file-archive"></i> ZIP
+                        </button>
+                        <button class="category-tab document" data-category="document" onclick="filterByCategory('document')">
+                            <i class="fas fa-file"></i> Dokumen
+                        </button>
+                    </div>
+                </div>
                 
                 <div class="files-list" id="filesList">
                     <div class="empty-files">
@@ -871,6 +1092,9 @@
         let currentPreviewUrl = null;
         let uploadInProgress = false;
         let currentStorageQuota = 0;
+        let currentCategoryFilter = 'all';
+        let currentSearchQuery = '';
+        let fileBeingRenamed = null;
         
         // Fungsi untuk mencegah zoom dengan keyboard (Ctrl +, Ctrl -, Ctrl + mouse wheel)
         function preventZoom(event) {
@@ -959,6 +1183,7 @@
                         store.createIndex('type', 'type', { unique: false });
                         store.createIndex('size', 'size', { unique: false });
                         store.createIndex('uploadDate', 'uploadDate', { unique: false });
+                        store.createIndex('category', 'category', { unique: false });
                         console.log('Object store berhasil dibuat');
                     }
                     
@@ -1004,17 +1229,17 @@
             const ext = filename.split('.').pop().toLowerCase();
             
             if (type && type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(ext)) {
-                return { icon: 'fas fa-image', type: 'photo', typeName: 'Gambar' };
+                return { icon: 'fas fa-image', type: 'photo', typeName: 'Gambar', category: 'photo' };
             } else if (type && type.startsWith('audio/') || ['mp3', 'wav', 'm4a', 'ogg', 'flac', 'aac'].includes(ext)) {
-                return { icon: 'fas fa-music', type: 'audio', typeName: 'Audio' };
+                return { icon: 'fas fa-music', type: 'audio', typeName: 'Audio', category: 'audio' };
             } else if (type && type.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'].includes(ext)) {
-                return { icon: 'fas fa-video', type: 'video', typeName: 'Video' };
+                return { icon: 'fas fa-video', type: 'video', typeName: 'Video', category: 'video' };
             } else if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(ext)) {
-                return { icon: 'fas fa-file-archive', type: 'zip', typeName: 'Arsip' };
+                return { icon: 'fas fa-file-archive', type: 'zip', typeName: 'Arsip', category: 'zip' };
             } else if (['pdf', 'doc', 'docx', 'txt', 'xlsx', 'pptx', 'csv', 'rtf'].includes(ext)) {
-                return { icon: 'fas fa-file', type: 'document', typeName: 'Dokumen' };
+                return { icon: 'fas fa-file', type: 'document', typeName: 'Dokumen', category: 'document' };
             } else {
-                return { icon: 'fas fa-file', type: 'document', typeName: 'File' };
+                return { icon: 'fas fa-file', type: 'document', typeName: 'File', category: 'document' };
             }
         }
         
@@ -1327,68 +1552,259 @@
             });
         }
         
-        // Render daftar file
+        // Update file di database
+        async function updateFileInDB(fileData) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.put(fileData);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+                transaction.onerror = () => reject(transaction.error);
+            });
+        }
+        
+        // Filter file berdasarkan kategori dan pencarian
+        function filterFiles(files) {
+            return files.filter(file => {
+                // Filter berdasarkan kategori
+                if (currentCategoryFilter !== 'all') {
+                    const fileIcon = getFileIcon(file.name, file.type);
+                    if (fileIcon.category !== currentCategoryFilter) {
+                        return false;
+                    }
+                }
+                
+                // Filter berdasarkan pencarian
+                if (currentSearchQuery.trim() !== '') {
+                    const searchLower = currentSearchQuery.toLowerCase();
+                    const fileName = file.name.toLowerCase();
+                    return fileName.includes(searchLower);
+                }
+                
+                return true;
+            });
+        }
+        
+        // Render daftar file dengan filter
         async function renderFiles() {
             try {
-                const files = await getAllFiles();
+                const allFiles = await getAllFiles();
+                const filteredFiles = filterFiles(allFiles);
                 const filesList = document.getElementById('filesList');
                 
-                if (files.length === 0) {
-                    filesList.innerHTML = `
-                        <div class="empty-files">
-                            <i class="fas fa-folder-open"></i>
-                            <h3>Belum ada file</h3>
-                            <p>Unggah file pertama Anda untuk melihatnya di sini</p>
-                        </div>
-                    `;
+                if (filteredFiles.length === 0) {
+                    let emptyMessage = '';
+                    if (currentSearchQuery.trim() !== '') {
+                        emptyMessage = `
+                            <div class="empty-files">
+                                <i class="fas fa-search"></i>
+                                <h3>Tidak ada file ditemukan</h3>
+                                <p>Tidak ada file yang cocok dengan "${currentSearchQuery}"</p>
+                                <p><small>Coba kata kunci lain atau hapus filter pencarian</small></p>
+                            </div>
+                        `;
+                    } else if (currentCategoryFilter !== 'all') {
+                        const categoryNames = {
+                            'photo': 'Foto',
+                            'audio': 'Audio',
+                            'video': 'Video',
+                            'zip': 'ZIP',
+                            'document': 'Dokumen'
+                        };
+                        emptyMessage = `
+                            <div class="empty-files">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>Tidak ada file ${categoryNames[currentCategoryFilter]}</h3>
+                                <p>Unggah file ${categoryNames[currentCategoryFilter]} pertama Anda</p>
+                            </div>
+                        `;
+                    } else {
+                        emptyMessage = `
+                            <div class="empty-files">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>Belum ada file</h3>
+                                <p>Unggah file pertama Anda untuk melihatnya di sini</p>
+                            </div>
+                        `;
+                    }
+                    
+                    filesList.innerHTML = emptyMessage;
                     document.getElementById('total-files').textContent = '0';
                     return;
                 }
                 
                 filesList.innerHTML = '';
                 
-                files.forEach((file) => {
+                filteredFiles.forEach((file) => {
                     const fileIcon = getFileIcon(file.name, file.type);
                     const fileSize = formatFileSize(file.size);
                     const uploadDate = formatDate(file.uploadDate);
+                    const isRenaming = fileBeingRenamed === file.id;
                     
                     const fileItem = document.createElement('div');
                     fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                        <div class="file-icon ${fileIcon.type}">
-                            <i class="${fileIcon.icon}"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name" title="${file.name}">${file.name}</div>
-                            <div class="file-meta">
-                                <span>${fileIcon.typeName}</span>
-                                <span>${fileSize}</span>
-                                <span>${uploadDate}</span>
+                    fileItem.setAttribute('data-file-id', file.id);
+                    
+                    if (isRenaming) {
+                        fileItem.innerHTML = `
+                            <div class="file-icon ${fileIcon.type}">
+                                <i class="${fileIcon.icon}"></i>
                             </div>
-                        </div>
-                        <div class="file-actions">
-                            <button class="file-action-btn preview" onclick="previewFile('${file.id}')" title="Preview">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="file-action-btn download" onclick="downloadFile('${file.id}')" title="Unduh">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="file-action-btn delete" onclick="deleteFile('${file.id}')" title="Hapus">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
+                            <div class="file-info">
+                                <div class="file-rename-container">
+                                    <input type="text" class="file-rename-input" value="${file.name}" id="rename-input-${file.id}">
+                                    <div class="file-rename-buttons">
+                                        <button class="rename-btn rename-save" onclick="saveRename('${file.id}')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="rename-btn rename-cancel" onclick="cancelRename()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="file-meta">
+                                    <span>${fileIcon.typeName}</span>
+                                    <span>${fileSize}</span>
+                                    <span>${uploadDate}</span>
+                                </div>
+                            </div>
+                            <div class="file-actions">
+                                <button class="file-action-btn save-rename" onclick="saveRename('${file.id}')" title="Simpan">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="file-action-btn cancel-rename" onclick="cancelRename()" title="Batal">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        fileItem.innerHTML = `
+                            <div class="file-icon ${fileIcon.type}">
+                                <i class="${fileIcon.icon}"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name-container">
+                                    <span class="file-name" title="${file.name}" onclick="startRename('${file.id}')">${file.name}</span>
+                                    <button class="edit-name-btn" onclick="startRename('${file.id}')" title="Edit Nama">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                                <div class="file-meta">
+                                    <span>${fileIcon.typeName}</span>
+                                    <span>${fileSize}</span>
+                                    <span>${uploadDate}</span>
+                                </div>
+                            </div>
+                            <div class="file-actions">
+                                <button class="file-action-btn preview" onclick="previewFile('${file.id}')" title="Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="file-action-btn download" onclick="downloadFile('${file.id}')" title="Unduh">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="file-action-btn delete" onclick="deleteFile('${file.id}')" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
                     
                     filesList.appendChild(fileItem);
                 });
                 
-                document.getElementById('total-files').textContent = files.length;
+                document.getElementById('total-files').textContent = filteredFiles.length;
                 await updateStorageStats();
+                
+                // Auto-focus input rename jika sedang rename
+                if (fileBeingRenamed) {
+                    const renameInput = document.getElementById(`rename-input-${fileBeingRenamed}`);
+                    if (renameInput) {
+                        renameInput.focus();
+                        renameInput.select();
+                    }
+                }
                 
             } catch (error) {
                 console.error('Error merender file:', error);
                 showNotification('Gagal memuat daftar file', 'error');
             }
+        }
+        
+        // Mulai proses rename file
+        function startRename(fileId) {
+            fileBeingRenamed = fileId;
+            renderFiles();
+        }
+        
+        // Simpan rename file
+        async function saveRename(fileId) {
+            try {
+                const renameInput = document.getElementById(`rename-input-${fileId}`);
+                if (!renameInput) {
+                    throw new Error('Input rename tidak ditemukan');
+                }
+                
+                const newName = renameInput.value.trim();
+                if (!newName) {
+                    showNotification('Nama file tidak boleh kosong', 'error');
+                    return;
+                }
+                
+                if (newName.length > 255) {
+                    showNotification('Nama file terlalu panjang (maksimal 255 karakter)', 'error');
+                    return;
+                }
+                
+                const fileData = await getFileFromDB(fileId);
+                if (!fileData) {
+                    throw new Error('File tidak ditemukan');
+                }
+                
+                // Simpan nama lama untuk notifikasi
+                const oldName = fileData.name;
+                
+                // Update nama file
+                fileData.name = newName;
+                await updateFileInDB(fileData);
+                
+                // Reset state rename
+                fileBeingRenamed = null;
+                
+                // Render ulang daftar file
+                await renderFiles();
+                
+                showNotification(`File "${oldName}" berhasil diubah menjadi "${newName}"`);
+                
+            } catch (error) {
+                console.error('Error mengubah nama file:', error);
+                showNotification(`Gagal mengubah nama file: ${error.message}`, 'error');
+            }
+        }
+        
+        // Batalkan rename file
+        function cancelRename() {
+            fileBeingRenamed = null;
+            renderFiles();
+        }
+        
+        // Filter file berdasarkan kategori
+        function filterByCategory(category) {
+            currentCategoryFilter = category;
+            
+            // Update tab aktif
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.category-tab[data-category="${category}"]`).classList.add('active');
+            
+            renderFiles();
         }
         
         // Unggah file ke IndexedDB
@@ -1408,6 +1824,9 @@
                 // Baca file
                 const fileBuffer = await readFileInChunks(file);
                 
+                // Dapatkan kategori file
+                const fileIcon = getFileIcon(file.name, file.type);
+                
                 // Buat objek file untuk disimpan
                 const fileData = {
                     id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -1415,7 +1834,8 @@
                     type: file.type || 'application/octet-stream',
                     size: file.size,
                     data: fileBuffer,
-                    uploadDate: new Date().toISOString()
+                    uploadDate: new Date().toISOString(),
+                    category: fileIcon.category
                 };
                 
                 // Update progress status
@@ -1583,6 +2003,7 @@
                         <p><strong>Nama:</strong> ${fileData.name}</p>
                         <p><strong>Tipe:</strong> ${fileData.type}</p>
                         <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Kategori:</strong> Foto</p>
                         <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
                     `;
                 } else if (fileData.type && fileData.type.startsWith('audio/')) {
@@ -1596,6 +2017,7 @@
                         <p><strong>Nama:</strong> ${fileData.name}</p>
                         <p><strong>Tipe:</strong> ${fileData.type}</p>
                         <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Kategori:</strong> Audio</p>
                         <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
                     `;
                 } else if (fileData.type && fileData.type.startsWith('video/')) {
@@ -1609,6 +2031,7 @@
                         <p><strong>Nama:</strong> ${fileData.name}</p>
                         <p><strong>Tipe:</strong> ${fileData.type}</p>
                         <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Kategori:</strong> Video</p>
                         <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
                     `;
                 } else {
@@ -1621,6 +2044,7 @@
                         <p><strong>Nama:</strong> ${fileData.name}</p>
                         <p><strong>Tipe:</strong> ${fileData.type || 'Tidak diketahui'}</p>
                         <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Kategori:</strong> ${fileIcon.typeName}</p>
                         <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
                         <p>Silakan download untuk melihat isinya.</p>
                     `;
@@ -1716,8 +2140,8 @@
                         name: file.name,
                         type: file.type,
                         size: file.size,
-                        uploadDate: file.uploadDate
-                        // Note: Tidak menyertakan data file untuk mengurangi ukuran
+                        uploadDate: file.uploadDate,
+                        category: file.category
                     }))
                 };
                 
@@ -1807,6 +2231,17 @@
                 }
             });
             
+            // Pencarian file
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentSearchQuery = e.target.value;
+                    renderFiles();
+                }, 300);
+            });
+            
             // Event listeners untuk tombol tambahan
             document.getElementById('exportBtn').addEventListener('click', exportDatabase);
             document.getElementById('deleteAllBtn').addEventListener('click', deleteAllFiles);
@@ -1849,6 +2284,10 @@
         window.deleteFile = deleteFile;
         window.deleteAllFiles = deleteAllFiles;
         window.exportDatabase = exportDatabase;
+        window.filterByCategory = filterByCategory;
+        window.startRename = startRename;
+        window.saveRename = saveRename;
+        window.cancelRename = cancelRename;
     </script>
 </body>
 </html>
