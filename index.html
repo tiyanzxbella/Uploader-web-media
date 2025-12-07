@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Media Uploader - Unggah & Download File</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --danger: #e63946;
+            --warning: #f4a261;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo span {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .upload-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 992px) {
+            main {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .upload-section, .files-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--light-gray);
+            border-radius: 12px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-area h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .upload-area p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .upload-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .file-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .file-type {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--light-gray);
+            min-width: 100px;
+        }
+
+        .file-type i {
+            font-size: 1.8rem;
+        }
+
+        .file-type.photo i { color: #e63946; }
+        .file-type.audio i { color: #7209b7; }
+        .file-type.video i { color: #4cc9f0; }
+        .file-type.zip i { color: #f4a261; }
+        .file-type.document i { color: #2a9d8f; }
+
+        .file-type-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .file-type-ext {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .progress-container {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--light-gray);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--success), var(--primary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .storage-info {
+            margin-top: 25px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .storage-bar {
+            height: 8px;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .storage-used {
+            height: 100%;
+            background: linear-gradient(to right, var(--success), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .storage-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .files-list {
+            margin-top: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--light);
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .file-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .file-icon.photo { background-color: rgba(230, 57, 70, 0.1); color: #e63946; }
+        .file-icon.audio { background-color: rgba(114, 9, 183, 0.1); color: #7209b7; }
+        .file-icon.video { background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0; }
+        .file-icon.zip { background-color: rgba(244, 162, 97, 0.1); color: #f4a261; }
+        .file-icon.document { background-color: rgba(42, 157, 143, 0.1); color: #2a9d8f; }
+
+        .file-info {
+            flex: 1;
+            min-width: 0; /* Untuk ellipsis */
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            flex-wrap: wrap;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-action-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+            padding: 5px;
+        }
+
+        .file-action-btn:hover {
+            color: var(--primary);
+        }
+
+        .file-action-btn.delete:hover {
+            color: var(--danger);
+        }
+
+        .empty-files {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-files i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .audio-preview {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .video-preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .upload-section, .files-section {
+                padding: 20px;
+            }
+
+            .file-types {
+                gap: 10px;
+            }
+
+            .file-type {
+                min-width: 80px;
+                padding: 10px;
+            }
+            
+            .file-meta {
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div>
+                        <h1>Real Media <span>Uploader</span></h1>
+                        <p>Unggah dan download file nyata di browser Anda</p>
+                    </div>
+                </div>
+                <div class="upload-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="total-files">0</div>
+                        <div class="stat-label">Total File</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="total-size">0 MB</div>
+                        <div class="stat-label">Total Ukuran</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <section class="upload-section">
+                <h2 class="section-title"><i class="fas fa-upload"></i> Unggah File Nyata</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Seret dan Lepaskan File di Sini</h3>
+                    <p>Atau klik untuk memilih file dari komputer Anda</p>
+                    <p><small>File disimpan di browser Anda menggunakan IndexedDB</small></p>
+                    <button class="upload-btn" id="fileInputBtn">Pilih File</button>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                    
+                    <div class="file-types">
+                        <div class="file-type photo">
+                            <i class="fas fa-image"></i>
+                            <span class="file-type-name">Foto</span>
+                            <span class="file-type-ext">JPG, PNG, GIF</span>
+                        </div>
+                        <div class="file-type audio">
+                            <i class="fas fa-music"></i>
+                            <span class="file-type-name">Audio</span>
+                            <span class="file-type-ext">MP3, WAV, M4A</span>
+                        </div>
+                        <div class="file-type video">
+                            <i class="fas fa-video"></i>
+                            <span class="file-type-name">Video</span>
+                            <span class="file-type-ext">MP4, AVI, MOV</span>
+                        </div>
+                        <div class="file-type zip">
+                            <i class="fas fa-file-archive"></i>
+                            <span class="file-type-name">ZIP</span>
+                            <span class="file-type-ext">ZIP, RAR, 7Z</span>
+                        </div>
+                        <div class="file-type document">
+                            <i class="fas fa-file"></i>
+                            <span class="file-type-name">Dokumen</span>
+                            <span class="file-type-ext">PDF, DOC, TXT</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressStatus">Mengunggah...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+                
+                <div class="storage-info">
+                    <div class="storage-text">
+                        <span>Penyimpanan Browser</span>
+                        <span id="storage-percent">0%</span>
+                    </div>
+                    <div class="storage-bar">
+                        <div class="storage-used" id="storage-used"></div>
+                    </div>
+                    <div class="storage-text">
+                        <span id="storage-used-text">0 MB digunakan</span>
+                        <span id="storage-total">Maksimal: 500 MB</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="files-section">
+                <h2 class="section-title"><i class="fas fa-folder-open"></i> File Terunggah</h2>
+                
+                <div class="files-list" id="filesList">
+                    <!-- File items akan ditambahkan di sini oleh JavaScript -->
+                    <div class="empty-files">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>Belum ada file</h3>
+                        <p>Unggah file pertama Anda untuk melihatnya di sini</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Real Media Uploader. Semua file disimpan di browser Anda menggunakan IndexedDB.</p>
+            <p>File dapat diunduh kapan saja selama Anda menggunakan browser yang sama.</p>
+        </footer>
+    </div>
+    
+    <!-- Modal untuk preview file -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewTitle">Preview File</h3>
+                <button class="modal-close" id="closePreview">&times;</button>
+            </div>
+            <div class="modal-body" id="previewBody">
+                <!-- Konten preview akan dimasukkan di sini -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        File berhasil diunggah!
+    </div>
+
+    <script>
+        // Database untuk menyimpan file (menggunakan IndexedDB)
+        let db;
+        const DB_NAME = 'MediaUploaderDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'files';
+        const MAX_STORAGE = 500 * 1024 * 1024; // 500 MB maksimal
+        
+        // Buka koneksi ke IndexedDB
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => {
+                    console.error('IndexedDB error:', request.error);
+                    reject(request.error);
+                };
+                
+                request.onsuccess = () => {
+                    db = request.result;
+                    console.log('IndexedDB berhasil dibuka');
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Buat object store jika belum ada
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                        store.createIndex('name', 'name', { unique: false });
+                        store.createIndex('type', 'type', { unique: false });
+                        store.createIndex('uploadDate', 'uploadDate', { unique: false });
+                        console.log('Object store berhasil dibuat');
+                    }
+                };
+            });
+        };
+        
+        // Tampilkan notifikasi
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Dapatkan ikon berdasarkan tipe file
+        function getFileIcon(filename, type) {
+            const ext = filename.split('.').pop().toLowerCase();
+            
+            if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
+                return { icon: 'fas fa-image', type: 'photo', typeName: 'Gambar' };
+            } else if (type.startsWith('audio/') || ['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(ext)) {
+                return { icon: 'fas fa-music', type: 'audio', typeName: 'Audio' };
+            } else if (type.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv'].includes(ext)) {
+                return { icon: 'fas fa-video', type: 'video', typeName: 'Video' };
+            } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+                return { icon: 'fas fa-file-archive', type: 'zip', typeName: 'Arsip' };
+            } else if (['pdf', 'doc', 'docx', 'txt', 'xlsx', 'pptx'].includes(ext)) {
+                return { icon: 'fas fa-file', type: 'document', typeName: 'Dokumen' };
+            } else {
+                return { icon: 'fas fa-file', type: 'document', typeName: 'File' };
+            }
+        }
+        
+        // Format ukuran file
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Format tanggal
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Hitung total ukuran file di database
+        async function calculateTotalSize() {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+                
+                request.onsuccess = () => {
+                    const files = request.result;
+                    const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+                    resolve(totalSize);
+                };
+                
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+        }
+        
+        // Update statistik penyimpanan
+        async function updateStorageStats() {
+            try {
+                const totalSize = await calculateTotalSize();
+                const percent = Math.min(100, (totalSize / MAX_STORAGE) * 100);
+                
+                document.getElementById('total-size').textContent = formatFileSize(totalSize);
+                document.getElementById('storage-used').style.width = percent + '%';
+                document.getElementById('storage-percent').textContent = percent.toFixed(1) + '%';
+                document.getElementById('storage-used-text').textContent = formatFileSize(totalSize) + ' digunakan';
+                
+                return totalSize;
+            } catch (error) {
+                console.error('Error menghitung ukuran penyimpanan:', error);
+                return 0;
+            }
+        }
+        
+        // Tambah file ke database
+        async function addFileToDB(fileData) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                
+                const request = store.add(fileData);
+                
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+                
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+        }
+        
+        // Hapus file dari database
+        async function deleteFileFromDB(fileId) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                
+                const request = store.delete(fileId);
+                
+                request.onsuccess = () => {
+                    resolve(true);
+                };
+                
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+        }
+        
+        // Dapatkan semua file dari database
+        async function getAllFiles() {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const index = store.index('uploadDate');
+                const request = index.getAll();
+                
+                request.onsuccess = () => {
+                    // Urutkan dari yang terbaru
+                    const files = request.result.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+                    resolve(files);
+                };
+                
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+        }
+        
+        // Dapatkan file berdasarkan ID
+        async function getFileFromDB(fileId) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('Database belum diinisialisasi'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get(fileId);
+                
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+                
+                request.onerror = () => {
+                    reject(request.error);
+                };
+            });
+        }
+        
+        // Render daftar file
+        async function renderFiles() {
+            try {
+                const files = await getAllFiles();
+                const filesList = document.getElementById('filesList');
+                
+                if (files.length === 0) {
+                    filesList.innerHTML = `
+                        <div class="empty-files">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>Belum ada file</h3>
+                            <p>Unggah file pertama Anda untuk melihatnya di sini</p>
+                        </div>
+                    `;
+                    document.getElementById('total-files').textContent = '0';
+                    return;
+                }
+                
+                filesList.innerHTML = '';
+                
+                files.forEach((file, index) => {
+                    const fileIcon = getFileIcon(file.name, file.type);
+                    const fileSize = formatFileSize(file.size);
+                    const uploadDate = formatDate(file.uploadDate);
+                    
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <div class="file-icon ${fileIcon.type}">
+                            <i class="${fileIcon.icon}"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name" title="${file.name}">${file.name}</div>
+                            <div class="file-meta">
+                                <span>${fileIcon.typeName}</span>
+                                <span>${fileSize}</span>
+                                <span>${uploadDate}</span>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action-btn preview" onclick="previewFile('${file.id}')" title="Preview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="file-action-btn download" onclick="downloadFile('${file.id}')" title="Unduh">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="file-action-btn delete" onclick="deleteFile('${file.id}')" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    filesList.appendChild(fileItem);
+                });
+                
+                document.getElementById('total-files').textContent = files.length;
+                await updateStorageStats();
+                
+            } catch (error) {
+                console.error('Error merender file:', error);
+                showNotification('Gagal memuat daftar file', 'error');
+            }
+        }
+        
+        // Baca file sebagai ArrayBuffer (untuk file besar)
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+                
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        // Baca file sebagai base64 (untuk file kecil)
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Unggah file ke IndexedDB
+        async function uploadFile(file) {
+            try {
+                // Cek ukuran file
+                if (file.size > 50 * 1024 * 1024) { // 50MB per file
+                    throw new Error('Ukuran file maksimal 50MB per file');
+                }
+                
+                // Cek total penyimpanan
+                const currentSize = await calculateTotalSize();
+                if (currentSize + file.size > MAX_STORAGE) {
+                    throw new Error('Penyimpanan browser penuh. Hapus beberapa file terlebih dahulu.');
+                }
+                
+                // Baca file sebagai ArrayBuffer
+                const fileBuffer = await readFileAsArrayBuffer(file);
+                
+                // Buat objek file untuk disimpan
+                const fileData = {
+                    id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    data: fileBuffer,
+                    uploadDate: new Date().toISOString()
+                };
+                
+                // Simpan ke IndexedDB
+                await addFileToDB(fileData);
+                
+                return fileData;
+                
+            } catch (error) {
+                console.error('Error mengunggah file:', error);
+                throw error;
+            }
+        }
+        
+        // Unggah beberapa file
+        async function handleFileUpload(files) {
+            // Tampilkan progress bar
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('progress').style.width = '0%';
+            document.getElementById('progressPercent').textContent = '0%';
+            
+            const totalFiles = files.length;
+            let uploadedCount = 0;
+            
+            // Nonaktifkan tombol upload selama proses
+            const uploadBtn = document.getElementById('fileInputBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Mengunggah...';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileNumber = i + 1;
+                
+                document.getElementById('progressStatus').textContent = `Mengunggah ${fileNumber} dari ${totalFiles}: ${file.name}`;
+                
+                try {
+                    await uploadFile(file);
+                    uploadedCount++;
+                    
+                    // Update progress bar
+                    const progress = (uploadedCount / totalFiles) * 100;
+                    document.getElementById('progress').style.width = progress + '%';
+                    document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+                    
+                } catch (error) {
+                    console.error(`Gagal mengunggah ${file.name}:`, error);
+                    showNotification(`Gagal mengunggah "${file.name}": ${error.message}`, 'error');
+                }
+            }
+            
+            // Sembunyikan progress bar
+            setTimeout(() => {
+                document.getElementById('progressContainer').style.display = 'none';
+                
+                // Aktifkan kembali tombol upload
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Pilih File';
+                
+                // Render ulang daftar file
+                renderFiles();
+                
+                // Tampilkan notifikasi
+                if (uploadedCount > 0) {
+                    showNotification(`${uploadedCount} file berhasil diunggah!`);
+                }
+            }, 500);
+        }
+        
+        // Download file
+        async function downloadFile(fileId) {
+            try {
+                const fileData = await getFileFromDB(fileId);
+                
+                if (!fileData) {
+                    throw new Error('File tidak ditemukan');
+                }
+                
+                // Konversi ArrayBuffer ke Blob
+                const blob = new Blob([fileData.data], { type: fileData.type });
+                
+                // Buat URL untuk blob
+                const url = URL.createObjectURL(blob);
+                
+                // Buat elemen link untuk download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileData.name;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Bersihkan
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+                
+                showNotification(`Mengunduh "${fileData.name}"`);
+                
+            } catch (error) {
+                console.error('Error mengunduh file:', error);
+                showNotification(`Gagal mengunduh file: ${error.message}`, 'error');
+            }
+        }
+        
+        // Preview file
+        async function previewFile(fileId) {
+            try {
+                const fileData = await getFileFromDB(fileId);
+                
+                if (!fileData) {
+                    throw new Error('File tidak ditemukan');
+                }
+                
+                // Konversi ArrayBuffer ke Blob
+                const blob = new Blob([fileData.data], { type: fileData.type });
+                const url = URL.createObjectURL(blob);
+                
+                const modal = document.getElementById('previewModal');
+                const previewBody = document.getElementById('previewBody');
+                const previewTitle = document.getElementById('previewTitle');
+                
+                previewTitle.textContent = `Preview: ${fileData.name}`;
+                
+                // Tampilkan preview berdasarkan tipe file
+                if (fileData.type.startsWith('image/')) {
+                    previewBody.innerHTML = `
+                        <div class="preview-container">
+                            <img src="${url}" alt="${fileData.name}" class="preview-image">
+                        </div>
+                        <p><strong>Nama:</strong> ${fileData.name}</p>
+                        <p><strong>Tipe:</strong> ${fileData.type}</p>
+                        <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
+                    `;
+                } else if (fileData.type.startsWith('audio/')) {
+                    previewBody.innerHTML = `
+                        <div class="preview-container">
+                            <audio controls class="audio-preview">
+                                <source src="${url}" type="${fileData.type}">
+                                Browser Anda tidak mendukung pemutar audio.
+                            </audio>
+                        </div>
+                        <p><strong>Nama:</strong> ${fileData.name}</p>
+                        <p><strong>Tipe:</strong> ${fileData.type}</p>
+                        <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
+                    `;
+                } else if (fileData.type.startsWith('video/')) {
+                    previewBody.innerHTML = `
+                        <div class="preview-container">
+                            <video controls class="video-preview">
+                                <source src="${url}" type="${fileData.type}">
+                                Browser Anda tidak mendukung pemutar video.
+                            </video>
+                        </div>
+                        <p><strong>Nama:</strong> ${fileData.name}</p>
+                        <p><strong>Tipe:</strong> ${fileData.type}</p>
+                        <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
+                    `;
+                } else {
+                    previewBody.innerHTML = `
+                        <div class="preview-container">
+                            <i class="fas fa-file ${getFileIcon(fileData.name, fileData.type).type}" style="font-size: 5rem; color: #4361ee;"></i>
+                        </div>
+                        <p><strong>Nama:</strong> ${fileData.name}</p>
+                        <p><strong>Tipe:</strong> ${fileData.type || 'Tidak diketahui'}</p>
+                        <p><strong>Ukuran:</strong> ${formatFileSize(fileData.size)}</p>
+                        <p><strong>Diunggah:</strong> ${formatDate(fileData.uploadDate)}</p>
+                        <p>File ini tidak dapat dipreview. Silakan download untuk melihat isinya.</p>
+                    `;
+                }
+                
+                // Tampilkan modal
+                modal.style.display = 'flex';
+                
+                // Tutup modal saat klik di luar
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        URL.revokeObjectURL(url);
+                    }
+                });
+                
+                // Tutup modal dengan tombol close
+                document.getElementById('closePreview').onclick = () => {
+                    modal.style.display = 'none';
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Error mempreview file:', error);
+                showNotification(`Gagal mempreview file: ${error.message}`, 'error');
+            }
+        }
+        
+        // Hapus file
+        async function deleteFile(fileId) {
+            try {
+                const fileData = await getFileFromDB(fileId);
+                
+                if (!fileData) {
+                    throw new Error('File tidak ditemukan');
+                }
+                
+                if (confirm(`Apakah Anda yakin ingin menghapus "${fileData.name}"?`)) {
+                    await deleteFileFromDB(fileId);
+                    await renderFiles();
+                    showNotification(`"${fileData.name}" telah dihapus`);
+                }
+                
+            } catch (error) {
+                console.error('Error menghapus file:', error);
+                showNotification(`Gagal menghapus file: ${error.message}`, 'error');
+            }
+        }
+        
+        // Inisialisasi ketika halaman dimuat
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Inisialisasi IndexedDB
+                await initDB();
+                
+                // Render file yang ada
+                await renderFiles();
+                
+                // Tangani klik pada tombol pilih file
+                document.getElementById('fileInputBtn').addEventListener('click', () => {
+                    document.getElementById('fileInput').click();
+                });
+                
+                // Tangani pemilihan file
+                document.getElementById('fileInput').addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    
+                    // Validasi jumlah file
+                    if (files.length > 10) {
+                        alert('Maksimal 10 file per kali upload');
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    if (files.length > 0) {
+                        handleFileUpload(files);
+                    }
+                    
+                    // Reset input file
+                    e.target.value = '';
+                });
+                
+                // Tangani drag & drop
+                const uploadArea = document.getElementById('uploadArea');
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+                
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    
+                    const files = Array.from(e.dataTransfer.files);
+                    
+                    // Validasi jumlah file
+                    if (files.length > 10) {
+                        alert('Maksimal 10 file per kali upload');
+                        return;
+                    }
+                    
+                    if (files.length > 0) {
+                        handleFileUpload(files);
+                    }
+                });
+                
+                // Klik pada area upload juga membuka dialog pemilihan file
+                uploadArea.addEventListener('click', () => {
+                    document.getElementById('fileInput').click();
+                });
+                
+                console.log('Aplikasi siap digunakan. File disimpan di IndexedDB browser Anda.');
+                
+            } catch (error) {
+                console.error('Error inisialisasi aplikasi:', error);
+                showNotification('Gagal memuat aplikasi. Silakan refresh halaman.', 'error');
+            }
+        });
+        
+        // Ekspor fungsi ke global scope untuk aksi tombol
+        window.downloadFile = downloadFile;
+        window.previewFile = previewFile;
+        window.deleteFile = deleteFile;
+    </script>
+</body>
+</html>
